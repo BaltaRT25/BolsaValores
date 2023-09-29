@@ -1,0 +1,45 @@
+﻿@if(!String.IsNullOrEmpty(Tipo))
+{
+    switch (Tipo)
+    {
+        case "Exitosa":
+            <div class="alert alert-success" role="alert">
+              @Mensaje
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="CerrarNotificacion">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            break;
+        case "Error":
+            <div class="alert alert-danger" role="alert">
+                @Mensaje
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="CerrarNotificacion">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            break;
+        case "Advertencia":
+            <div class="alert alert-warning" role="alert">
+                @Mensaje
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="CerrarNotificacion">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            break;
+        default:
+            break;
+    }
+}
+
+
+
+@code {
+    [Parameter] public string Tipo {get; set;} = string.Empty;
+    [Parameter] public string Mensaje { get; set; } = string.Empty;
+    [Parameter] public EventCallback<bool> Cerrar { get; set; }
+
+    async Task CerrarNotificacion()
+    {
+        await Cerrar.InvokeAsync(false);
+    }
+}

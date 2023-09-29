@@ -1,0 +1,94 @@
+﻿@page "/"
+@inject IServicioBot ServicioBot
+
+<div class="contenedorBot">
+    <div class="tituloBot">
+        Chatbot
+    </div>
+    <div class="conversacion" id="conversacion">
+
+        @if (MensajesBot.Count == 1 && MensajesUsuario.Count == 0)
+        {
+            <div class="contenedorMensajeBot">
+                <div class="iconoBot">
+                    <i class="bi bi-robot"></i>
+                </div>
+                <div class="mensajeBot">
+                    @((MarkupString)MensajesBot.FirstOrDefault().Value)
+                </div>
+            </div>
+        }
+        else if(MensajesBot.Count > 1)
+        {
+            @foreach (var mensajeBot in MensajesBot)
+            {
+                @foreach (var mensajeUsuario in MensajesUsuario)
+                {
+                    if (mensajeBot.Key == mensajeUsuario.Key)
+                    {
+                         <div class="contenedorMensajeBot">
+                            <div class="iconoBot">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="mensajeBot">
+                                @((MarkupString)mensajeBot.Value)
+                            </div>
+                        </div>
+                        <div class="mensajeUsuario">
+                            @mensajeUsuario.Value
+                        </div>
+                    }
+                }
+            }
+            <div class="contenedorMensajeBot">
+                <div class="iconoBot">
+                    <i class="bi bi-robot"></i>
+                </div>
+                <div class="mensajeBot">
+                    @((MarkupString)MensajesBot.Where(x => x.Key == ContadorMensaje).FirstOrDefault().Value)
+                </div>
+            </div>
+        }
+    </div>
+    <div class="mensaje">
+        <div class="contenedorMensajeUsuario">
+            <div>
+                <input type="text" placeholder="Escribe una respuesta" @bind-value=@RespuestaUsuario>
+            </div>
+            <div class="iconoEnviarMensaje">
+                <i class="bi bi-send" @onclick="EnviarMensaje"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+    Dictionary<int, string> MensajesBot { get; set; } = new Dictionary<int, string>();
+    Dictionary<int, string> MensajesUsuario { get; set; } = new Dictionary<int, string>();
+    int ContadorMensaje { get; set; } = 0;
+    string RespuestaUsuario { get; set; } = string.Empty;
+    string RespuestaBot { get; set; } = string.Empty;
+    string MensajeInicial { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        MensajeInicial = ServicioBot.DefinirRespuestaMenu("0");
+        ContadorMensaje++;
+        MensajesBot.Add(ContadorMensaje, MensajeInicial);
+        base.OnInitialized();
+    }
+
+    void EnviarMensaje()
+    {
+        if (!String.IsNullOrEmpty(RespuestaUsuario))
+        {
+            MensajesUsuario.Add(ContadorMensaje, RespuestaUsuario);
+            ContadorMensaje++;
+            RespuestaBot = ServicioBot.DefinirRespuestaMenu(RespuestaUsuario);
+            RespuestaUsuario = string.Empty;
+            MensajesBot.Add(ContadorMensaje, RespuestaBot);
+        }
+    }
+}

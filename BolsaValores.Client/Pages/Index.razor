@@ -1,0 +1,66 @@
+﻿@page "/inicio"
+@layout InicioLayout
+@inject NavigationManager Navegacion
+
+@if (MuestraNotificacion)
+{
+    <Notificacion Tipo=@TipoNotificacion Mensaje=@MensajeNotificacion Cerrar="CerrarNotificacion" />
+}
+
+<div class="contenedorIniciarSesion">
+    <div class="columnaImagen">
+        <img src="images/signin-image.jpg" class="imagenInicio" />
+    </div>
+    <div>
+        <div class="columnaInicioSesionItem titulo">
+            Bolsa de Valores Stocks
+        </div>
+        <div class="columnaInicioSesionItem inicioSesion">
+            <form>
+                <div class="campoFormulario">
+                    <i class="bi bi-person-fill"></i>
+                    <input type="text" name="nombre" id="nombre" placeholder="Correo electrónico" @bind-value=@Usuario>
+                </div>
+                <div class="campoFormulario">
+                    <i class="bi bi-lock-fill"></i>
+                    <input type="password" name="pass" id="pass" placeholder="Contraseña" @bind-value=@Contrasena>
+                </div>
+                <div class="botonFormulario">
+                    <button type="button" class="btn btn-primary" @onclick="IniciarSesion">Ingresar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code{
+    string Usuario { get; set; } = string.Empty;
+    string Contrasena { get; set; } = string.Empty;
+    bool MuestraNotificacion { get; set; } = false;
+    string TipoNotificacion { get; set; } = string.Empty;
+    string MensajeNotificacion { get; set; } = string.Empty;
+
+    void IniciarSesion()
+    {
+        if(!String.IsNullOrEmpty(Usuario) && !String.IsNullOrEmpty(Contrasena))
+        {
+            TipoNotificacion = Usuario == "usuario@bolsa.com" && Contrasena == "R1Ux19ma!" ? "Exitosa" : "Error";
+            MensajeNotificacion = TipoNotificacion == "Exitosa" ? "Bienvenido a la Bolsa de Valores" : "El usuario y/o contraseña no son correctos. Inténtalo de nuevo.";
+            if(TipoNotificacion == "Exitosa")
+            {
+                Navegacion.NavigateTo("/inicio");
+            }
+        }
+        else
+        {
+            TipoNotificacion = "Advertencia";
+            MensajeNotificacion = "Debes ingresar el usuario y la contraseña.";
+        }
+        MuestraNotificacion = true;
+    }
+
+    void CerrarNotificacion(bool muestraNotificacion)
+    {
+        MuestraNotificacion = muestraNotificacion;
+    }
+}
