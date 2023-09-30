@@ -1,4 +1,5 @@
 ﻿using BolsaValores.Business.Interfaces;
+using BolsaValores.Shared.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,16 +10,16 @@ namespace BolsaValoresAPI.Controllers
     
     public class BotController : ControllerBase
     {
-        public BotController(IBotBL bot) 
+        public BotController(IAccionBL accionBL) 
         {
-            Bot = bot;
+            AccionBL = accionBL;
         }
-        public IBotBL Bot { get; }
+        public IAccionBL AccionBL { get; }
 
-        [HttpPost("RecibirMensaje")]
-        public string RecibirMensaje() 
+        [HttpGet("Consultar/{idAccion}")]
+        public async Task<AccionDTO> Consultar(string idAccion) 
         {
-            return Bot.ResponderMensaje();
+            return await AccionBL.Consultar(idAccion);
         }
     }
 }
