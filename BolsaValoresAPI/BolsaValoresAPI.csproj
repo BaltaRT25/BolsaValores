@@ -14,4 +14,8 @@
     <ProjectReference Include="..\BolsaValores.Business\BolsaValores.Business.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Temporales\" />
+  </ItemGroup>
+
 </Project>

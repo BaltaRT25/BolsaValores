@@ -1,9 +1,9 @@
 ﻿@page "/inicio"
-@inject IServicioBot ServicioBot
+@inject IBot ServicioBot
 
 <div class="contenedorBot">
     <div class="tituloBot">
-        Chatbot
+        Bot
     </div>
     <div class="conversacion" id="conversacion">
 
@@ -40,14 +40,28 @@
                     }
                 }
             }
-            <div class="contenedorMensajeBot">
-                <div class="iconoBot">
-                    <i class="bi bi-robot"></i>
+            @if (BotPensando)
+            {
+                <div class="contenedorMensajeBot">
+                    <div class="iconoBot">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="mensajeBot">
+                        Pensando...
+                    </div>
                 </div>
-                <div class="mensajeBot">
-                    @((MarkupString)MensajesBot.Where(x => x.Key == ContadorMensaje).FirstOrDefault().Value)
+            }
+            else
+            {
+                <div class="contenedorMensajeBot">
+                    <div class="iconoBot">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="mensajeBot">
+                        @((MarkupString)MensajesBot.Where(x => x.Key == ContadorMensaje).FirstOrDefault().Value)
+                    </div>
                 </div>
-            </div>
+            }
         }
     </div>
     <div class="mensaje">
@@ -71,22 +85,25 @@
     string RespuestaUsuario { get; set; } = string.Empty;
     string RespuestaBot { get; set; } = string.Empty;
     string MensajeInicial { get; set; } = string.Empty;
+    bool BotPensando{ get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        MensajeInicial = ServicioBot.DefinirRespuestaMenu("0");
+        MensajeInicial = await ServicioBot.DefinirRespuestaMenu("0");
         ContadorMensaje++;
         MensajesBot.Add(ContadorMensaje, MensajeInicial);
         base.OnInitialized();
     }
 
-    void EnviarMensaje()
+    async Task EnviarMensaje()
     {
         if (!String.IsNullOrEmpty(RespuestaUsuario))
         {
             MensajesUsuario.Add(ContadorMensaje, RespuestaUsuario);
             ContadorMensaje++;
-            RespuestaBot = ServicioBot.DefinirRespuestaMenu(RespuestaUsuario);
+            BotPensando = true;
+            RespuestaBot = await ServicioBot.DefinirRespuestaMenu(RespuestaUsuario);
+            BotPensando = false;
             RespuestaUsuario = string.Empty;
             MensajesBot.Add(ContadorMensaje, RespuestaBot);
         }
