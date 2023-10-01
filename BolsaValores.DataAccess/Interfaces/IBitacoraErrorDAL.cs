@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BolsaValores.DataAccess.Interfaces
 {
-    public interface IAccionDAL
+    public interface IBitacoraErrorDAL
     {
-        Task<bool> Registrar(Accion accion);
+        Task<bool> RegistrarMovimiento(BitacoraErrores bitacora);
     }
 }
