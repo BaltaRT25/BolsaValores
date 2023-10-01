@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BolsaValoresAPI", "BolsaVal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BolsaValores.Business", "BolsaValores.Business\BolsaValores.Business.csproj", "{5C0F8180-804D-4CAF-97BE-58085BBDE0FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BolsaValores.Client", "BolsaValores.Client\BolsaValores.Client.csproj", "{9B9A7CE9-787A-4E11-80B8-24E17DE83D0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BolsaValores.Client", "BolsaValores.Client\BolsaValores.Client.csproj", "{9B9A7CE9-787A-4E11-80B8-24E17DE83D0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BolsaValores.Shared", "BolsaValores.Shared\BolsaValores.Shared.csproj", "{CCEB19CE-72C5-49B1-97D6-2FFAC467B8B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BolsaValores.Shared", "BolsaValores.Shared\BolsaValores.Shared.csproj", "{CCEB19CE-72C5-49B1-97D6-2FFAC467B8B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BolsaValores.DataAccess", "BolsaValores.DataAccess\BolsaValores.DataAccess.csproj", "{3FE83617-C68C-4381-9CE5-79E3E8B0D9F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{CCEB19CE-72C5-49B1-97D6-2FFAC467B8B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCEB19CE-72C5-49B1-97D6-2FFAC467B8B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCEB19CE-72C5-49B1-97D6-2FFAC467B8B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FE83617-C68C-4381-9CE5-79E3E8B0D9F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FE83617-C68C-4381-9CE5-79E3E8B0D9F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FE83617-C68C-4381-9CE5-79E3E8B0D9F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FE83617-C68C-4381-9CE5-79E3E8B0D9F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

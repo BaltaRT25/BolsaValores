@@ -49,16 +49,16 @@ namespace BolsaValores.Client.Services
         }
         public string DefinirRespuestaAccion(AccionDTO accion)
         {
-            if (accion != null && !String.IsNullOrEmpty(accion.Id))
+            if (accion != null && !String.IsNullOrEmpty(accion.Codigo))
             {
-                return $"El precio de la acción <b>{accion.Id}</b> <br/>" +
+                return $"El precio de la acción <b>{accion.Codigo}</b> <br/>" +
                                $"<ul>" +
                                $"<li><b>Fecha</b>: {accion.Fecha.Date.ToString("d")}</li>" +
                                $"<li><b>Hora</b>: {accion.Hora.ToString("H:mm")}</li>" +
                                $"<li><b>Abre en: </b>: {accion.Abre}</li>" +
                                $"<li><b>Cierra en: </b>: {accion.Cierra}</li>" +
-                               $"<li><b>Precio más bajo: </b>: {accion.Bajo}</li>" +
-                               $"<li><b>Precio más alto: </b>: {accion.Alto}</li>" +
+                               $"<li><b>Precio más bajo: </b>: {accion.Baja}</li>" +
+                               $"<li><b>Precio más alto: </b>: {accion.Alta}</li>" +
                                $"</ul>" +
                                $"<br/> 0. Volver al inicio" +
                                $"<br/> 1. Consultar otra empresa";

@@ -1,5 +1,8 @@
 ﻿using BolsaValores.Business.Interfaces;
+using BolsaValores.DataAccess.Interfaces;
+using BolsaValores.DataAccess.Persistences.BolsaValores;
 using BolsaValores.Shared.DTO;
+using Mapster;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -17,11 +20,13 @@ namespace BolsaValores.Business.Core
 {
     public class AccionBL : IAccionBL
     {
-        public AccionBL(IConfiguration configuracion) 
+        public AccionBL(IConfiguration configuracion, IAccionDAL accionDAL) 
         {
             Configuracion = configuracion;
+            AccionDAL = accionDAL;
         }
         public IConfiguration Configuracion { get; }
+        public IAccionDAL AccionDAL { get; }
 
         public async Task<AccionDTO> Consultar(string idAccion)
         {
@@ -31,6 +36,7 @@ namespace BolsaValores.Business.Core
             if (!String.IsNullOrEmpty(archivoAccion))
             {
                 accion = GenerarModeloRespuesta(archivoAccion);
+                var registroConsultaAccion = await Registrar(accion);
             }
             return accion;
         }
@@ -50,18 +56,24 @@ namespace BolsaValores.Business.Core
         }
         AccionDTO GenerarModeloRespuesta(string archivoAccion)
         {
-            var fecha = DateTime.Now;
             var filasAccion = archivoAccion.Split("\r\n").ToList();
             var valorFilaAccion = filasAccion[1].Split(",").ToList();
             var accion = new AccionDTO();
-            accion.Id = !String.IsNullOrEmpty(valorFilaAccion[0]) ? valorFilaAccion[0] : "No encontrado";
+            accion.Codigo = !String.IsNullOrEmpty(valorFilaAccion[0]) ? valorFilaAccion[0] : "No encontrado";
             accion.Fecha = !String.IsNullOrEmpty(valorFilaAccion[1]) ? Convert.ToDateTime(valorFilaAccion[1]) : DateTime.Now;
-            accion.Hora = !String.IsNullOrEmpty(valorFilaAccion[2]) ? Convert.ToDateTime(valorFilaAccion[2]) : DateTime.Now;
-            accion.Abre = !String.IsNullOrEmpty(valorFilaAccion[3]) ? Double.Parse(valorFilaAccion[3]) : 0;
-            accion.Alto = !String.IsNullOrEmpty(valorFilaAccion[4]) ? Double.Parse(valorFilaAccion[4]) : 0;
-            accion.Bajo = !String.IsNullOrEmpty(valorFilaAccion[5]) ? Double.Parse(valorFilaAccion[5]) : 0; 
-            accion.Cierra = !String.IsNullOrEmpty(valorFilaAccion[6]) ? Double.Parse(valorFilaAccion[6]) : 0;
+            accion.Hora = !String.IsNullOrEmpty(valorFilaAccion[2]) ? Convert.ToDateTime(valorFilaAccion[1]) : DateTime.Now;
+            accion.Abre = !String.IsNullOrEmpty(valorFilaAccion[3]) ? Decimal.Parse(valorFilaAccion[3]) : 0;
+            accion.Alta = !String.IsNullOrEmpty(valorFilaAccion[4]) ? Decimal.Parse(valorFilaAccion[4]) : 0;
+            accion.Baja = !String.IsNullOrEmpty(valorFilaAccion[5]) ? Decimal.Parse(valorFilaAccion[5]) : 0; 
+            accion.Cierra = !String.IsNullOrEmpty(valorFilaAccion[6]) ? Decimal.Parse(valorFilaAccion[6]) : 0;
             return accion;
+        }
+
+        public async Task<bool> Registrar(AccionDTO accionDTO)
+        {
+            var accionDB = accionDTO.Adapt<Accion>();
+            accionDB.IdAccion = Guid.NewGuid().ToString();
+            return await AccionDAL.RegistrarConsulta(accionDB);
         }
     }
 }
