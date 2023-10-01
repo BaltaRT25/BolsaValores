@@ -8,25 +8,24 @@ using System.Threading.Tasks;
 
 namespace BolsaValores.DataAccess.Data
 {
-    public class AccionDAL : IAccionDAL
+    public class BitacoraHistorialDAL : IBitacoraHistorialDAL
     {
-        public AccionDAL(BolsaValoresTestContext bolsaValoresTestContext) 
+        public BitacoraHistorialDAL(BolsaValoresTestContext bolsaValoresTestContext)
         {
             BolsaValoresTestContext = bolsaValoresTestContext;
         }
         public BolsaValoresTestContext BolsaValoresTestContext { get; }
-
-        public async Task<bool> Registrar(Accion accion)
+        public async Task<bool> RegistrarMovimiento(BitacoraHistorial bitacora)
         {
             try
             {
-                BolsaValoresTestContext.Accion.Add(accion);
+                BolsaValoresTestContext.BitacoraHistorial.Add(bitacora);
                 await BolsaValoresTestContext.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }

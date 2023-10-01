@@ -19,7 +19,8 @@ namespace BolsaValoresAPI.Controllers
         [HttpGet("Consultar/{idAccion}")]
         public async Task<AccionDTO> Consultar(string idAccion) 
         {
-            return await AccionBL.Consultar(idAccion);
+            //de aquí se tomaría del token, el correo del usuario que realiza la petición
+            return await AccionBL.Consultar(idAccion,"usuario@bolsa.com");
         }
     }
 }

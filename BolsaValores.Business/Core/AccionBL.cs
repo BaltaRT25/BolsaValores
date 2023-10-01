@@ -20,37 +20,43 @@ namespace BolsaValores.Business.Core
 {
     public class AccionBL : IAccionBL
     {
-        public AccionBL(IConfiguration configuracion, IAccionDAL accionDAL) 
+        public AccionBL(IConfiguration configuracion, IAccionDAL accionDAL, IBitacoraErrorBL bitacoraError, IBitacoraHistorialBL bitacoraHistorial) 
         {
             Configuracion = configuracion;
             AccionDAL = accionDAL;
+            BitacoraError = bitacoraError;
+            BitacoraHistorial = bitacoraHistorial;
         }
         public IConfiguration Configuracion { get; }
         public IAccionDAL AccionDAL { get; }
+        public IBitacoraErrorBL BitacoraError { get; }
+        public IBitacoraHistorialBL BitacoraHistorial { get; }
 
-        public async Task<AccionDTO> Consultar(string idAccion)
+        public async Task<AccionDTO> Consultar(string codigo, string correoUsuario)
         {
             var accion = new AccionDTO();
-            var archivoAccion = await ObtenerAccionAPI(idAccion);
+            var archivoAccion = await ObtenerAccionAPI(codigo);
 
             if (!String.IsNullOrEmpty(archivoAccion))
             {
                 accion = GenerarModeloRespuesta(archivoAccion);
-                var registroConsultaAccion = await Registrar(accion);
+                var idAccion = Guid.NewGuid().ToString();
+                var registroConsultaAccion = await Registrar(accion, idAccion);
+                var registroHistorial = await BitacoraHistorial.RegistrarMovimiento(correoUsuario,idAccion);
             }
             return accion;
         }
 
-        async Task<string> ObtenerAccionAPI(string idAccion)
+        async Task<string> ObtenerAccionAPI(string codigo)
         {
             try
             {
                 HttpClient httpcliente = new HttpClient();
-                return await httpcliente.GetStringAsync($"https://stooq.com/q/l/?s={idAccion}.us&f=sd2t2ohlcv&h&e=csv");
+                return await httpcliente.GetStringAsync($"https://stooq.com/q/l/?s={codigo}.us&f=sd2t2ohlcv&h&e=csv");
             }
             catch(Exception ex) 
             {
-                Console.WriteLine(ex.Message);
+                var errorRegistrado = await BitacoraError.RegistrarMovimiento(ex.Message.ToString());
                 return string.Empty;
             }
         }
@@ -69,11 +75,11 @@ namespace BolsaValores.Business.Core
             return accion;
         }
 
-        public async Task<bool> Registrar(AccionDTO accionDTO)
+        public async Task<bool> Registrar(AccionDTO accionDTO, string idAccion)
         {
             var accionDB = accionDTO.Adapt<Accion>();
-            accionDB.IdAccion = Guid.NewGuid().ToString();
-            return await AccionDAL.RegistrarConsulta(accionDB);
+            accionDB.IdAccion = idAccion;
+            return await AccionDAL.Registrar(accionDB);
         }
     }
 }

@@ -20,9 +20,14 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddTransient<IAccionDAL, AccionDAL>();
+builder.Services.AddTransient<IBitacoraHistorialDAL, BitacoraHistorialDAL>();
+builder.Services.AddTransient<IBitacoraErrorDAL, BitacoraErrorDAL>();
+builder.Services.AddTransient<IAccionDAL, AccionDAL>();
 
 builder.Services.AddTransient<IBotBL, BotBL>();
 builder.Services.AddTransient<IAccionBL, AccionBL>();
+builder.Services.AddTransient<IBitacoraHistorialBL, BitacoraHistorialBL>();
+builder.Services.AddTransient<IBitacoraErrorBL, BitacoraErrorBL>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("default", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
