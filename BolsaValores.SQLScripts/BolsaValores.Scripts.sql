@@ -21,7 +21,8 @@ CREATE TABLE Usuario (
 CREATE TABLE BitacoraHistorial (
     idBitacoraHistorial varchar(255) NOT NULL PRIMARY KEY,
 	idAccion varchar(50) NOT NULL FOREIGN KEY REFERENCES Accion(idAccion),
-	correo varchar(255) NOT NULL FOREIGN KEY REFERENCES Usuario(correo)
+	correo varchar(255) NOT NULL FOREIGN KEY REFERENCES Usuario(correo),
+	fecha datetime NOT NULL
 );
 
 CREATE TABLE BitacoraErrores (
@@ -31,6 +32,17 @@ CREATE TABLE BitacoraErrores (
 );
 
 
-SELECT * FROM [dbo].[BitacoraHistorial] a 
+CREATE PROCEDURE SPCalcularTotalHistorialPorUsuario @correoUsuario varchar(255)
+AS
+SELECT COUNT(a.idBitacoraHistorial) FROM [dbo].[BitacoraHistorial] a 
 INNER JOIN [dbo].[Accion] b ON b.idAccion = a.idAccion
-WHERE a.correo = 'usuario@bolsa.com'
+WHERE a.correo = @correoUsuario
+
+
+CREATE PROCEDURE SPObtenerHistorial  @correoUsuario varchar(255), @Saltar int, @Tomar int
+AS
+SELECT a.fecha as fechaConsulta,b.codigo,b.fecha,b.hora,b.abre,b.cierra,b.alta,b.baja FROM [dbo].[BitacoraHistorial] a 
+INNER JOIN [dbo].[Accion] b ON b.idAccion = a.idAccion
+WHERE a.correo = @correoUsuario ORDER BY a.fecha DESC
+OFFSET (@Saltar) ROWS FETCH NEXT (@Tomar) ROWS ONLY
+
