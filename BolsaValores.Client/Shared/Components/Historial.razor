@@ -1,0 +1,68 @@
+﻿@using BolsaValores.Shared.DTO;
+@inject IHistorial HistorialServicio
+
+
+<button type="button" class="btn btn-secondary" @onclick="OcultarHistorial">Regresar</button>
+<br />
+@if (CargandoDatos)
+{
+    <label>Obteniendo tus datos...</label>
+}
+else
+{
+    <table>
+        <tr>
+            <th>Fecha de consulta</th>
+            <th>Código</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Abre</th>
+            <th>Cierra</th>
+            <th>Baja</th>
+            <th>Alta</th>
+        </tr>
+        <Virtualize @ref="HistorialContenedor" Context="historial"
+                ItemsProvider=@ObtenerHistorialPorScroll OverscanCount="25">
+                <tr>
+                    <td>@historial.FechaConsulta</td>
+                    <td>@historial.Codigo</td>
+                    <td>@historial.Fecha.Date.ToString("d")</td>
+                    <td>@historial.Hora.ToString("H:mm")</td>
+                    <td>@historial.Abre</td>
+                    <td>@historial.Cierra</td>
+                    <td>@historial.Baja</td>
+                    <td>@historial.Alta</td>
+                </tr>
+        </Virtualize>
+    </table>
+}
+
+@code {
+    [Parameter] public EventCallback<bool> MuestraHistorial { get; set; }
+    Virtualize<HistorialDTO> HistorialContenedor{ get; set; }
+    List<HistorialDTO> HistorialDTO { get; set; } = new List<HistorialDTO>();
+    int TotalHistorial { get; set; } = 0;
+    bool CargandoDatos { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HistorialDTO = await HistorialServicio.ObtenerHistorialPorUsuario(0, 20);
+        CargandoDatos = false;
+    }
+
+    private async ValueTask<ItemsProviderResult<HistorialDTO>> ObtenerHistorialPorScroll(ItemsProviderRequest peticion)
+    {
+        if(TotalHistorial == 0)
+        {
+            TotalHistorial = await HistorialServicio.CalcularTotalHistorialPorUsuario();
+        }
+        var cantidadASolicitar = Math.Min(peticion.Count, TotalHistorial - peticion.StartIndex);
+        HistorialDTO = await HistorialServicio.ObtenerHistorialPorUsuario(peticion.StartIndex, cantidadASolicitar);
+        return new ItemsProviderResult<HistorialDTO>(HistorialDTO, TotalHistorial);
+    }
+
+    async Task OcultarHistorial()
+    {
+        await MuestraHistorial.InvokeAsync(false);
+    }
+}

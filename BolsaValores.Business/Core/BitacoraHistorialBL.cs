@@ -24,6 +24,7 @@ namespace BolsaValores.Business.Core
             bitacoraHistorial.IdBitacoraHistorial = Guid.NewGuid().ToString();
             bitacoraHistorial.Correo = correoUsuario;
             bitacoraHistorial.IdAccion= idAccion;
+            bitacoraHistorial.Fecha = DateTime.Now;
             return await Bitacora.RegistrarMovimiento(bitacoraHistorial);
         }
     }

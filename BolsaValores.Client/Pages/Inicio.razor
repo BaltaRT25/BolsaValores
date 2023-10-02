@@ -1,80 +1,91 @@
 ﻿@page "/inicio"
 @inject IBot ServicioBot
 
-<div class="contenedorBot">
-    <div class="tituloBot">
-        Bot
-    </div>
-    <div class="conversacion" id="conversacion">
 
-        @if (MensajesBot.Count == 1 && MensajesUsuario.Count == 0)
-        {
-            <div class="contenedorMensajeBot">
-                <div class="iconoBot">
-                    <i class="bi bi-robot"></i>
-                </div>
-                <div class="mensajeBot">
-                    @((MarkupString)MensajesBot.FirstOrDefault().Value)
-                </div>
-            </div>
-        }
-        else if(MensajesBot.Count > 1)
-        {
-            @foreach (var mensajeBot in MensajesBot)
+@if (MuestraHistorial)
+{
+    <Historial MuestraHistorial="OcultarHistorial" />
+}
+else
+{
+    <div class="contenedorBot">
+        <div class="tituloBot">
+            Bot
+        </div>
+        <div class="conversacion" id="conversacion">
+
+            @if (MensajesBot.Count == 1 && MensajesUsuario.Count == 0)
             {
-                @foreach (var mensajeUsuario in MensajesUsuario)
+                <div class="contenedorMensajeBot">
+                    <div class="iconoBot">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="mensajeBot">
+                        @((MarkupString)MensajesBot.FirstOrDefault().Value)
+                    </div>
+                </div>
+            }
+            else if (MensajesBot.Count > 1)
+            {
+                @foreach (var mensajeBot in MensajesBot)
                 {
-                    if (mensajeBot.Key == mensajeUsuario.Key)
+                    @foreach (var mensajeUsuario in MensajesUsuario)
                     {
-                         <div class="contenedorMensajeBot">
-                            <div class="iconoBot">
-                                <i class="bi bi-robot"></i>
+                        if (mensajeBot.Key == mensajeUsuario.Key)
+                        {
+                            <div class="contenedorMensajeBot">
+                                <div class="iconoBot">
+                                    <i class="bi bi-robot"></i>
+                                </div>
+                                <div class="mensajeBot">
+                                    @((MarkupString)mensajeBot.Value)
+                                </div>
                             </div>
-                            <div class="mensajeBot">
-                                @((MarkupString)mensajeBot.Value)
+                            <div class="mensajeUsuario">
+                                @mensajeUsuario.Value
                             </div>
-                        </div>
-                        <div class="mensajeUsuario">
-                            @mensajeUsuario.Value
-                        </div>
+                        }
                     }
                 }
+                @if (BotPensando)
+                {
+                    <div class="contenedorMensajeBot">
+                        <div class="iconoBot">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="mensajeBot">
+                            Pensando...
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="contenedorMensajeBot">
+                        <div class="iconoBot">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="mensajeBot">
+                            @((MarkupString)MensajesBot.Where(x => x.Key == ContadorMensaje).FirstOrDefault().Value)
+                        </div>
+                    </div>
+                }
             }
-            @if (BotPensando)
-            {
-                <div class="contenedorMensajeBot">
-                    <div class="iconoBot">
-                        <i class="bi bi-robot"></i>
-                    </div>
-                    <div class="mensajeBot">
-                        Pensando...
-                    </div>
+        </div>
+        <div class="mensaje">
+            <div class="contenedorMensajeUsuario">
+                <div>
+                    <input type="text" placeholder="Escribe una respuesta" @bind-value=@RespuestaUsuario>
                 </div>
-            }
-            else
-            {
-                <div class="contenedorMensajeBot">
-                    <div class="iconoBot">
-                        <i class="bi bi-robot"></i>
-                    </div>
-                    <div class="mensajeBot">
-                        @((MarkupString)MensajesBot.Where(x => x.Key == ContadorMensaje).FirstOrDefault().Value)
-                    </div>
+                <div class="iconoEnviarMensaje">
+                    <i class="bi bi-send" @onclick="EnviarMensaje"></i>
                 </div>
-            }
-        }
-    </div>
-    <div class="mensaje">
-        <div class="contenedorMensajeUsuario">
-            <div>
-                <input type="text" placeholder="Escribe una respuesta" @bind-value=@RespuestaUsuario>
-            </div>
-            <div class="iconoEnviarMensaje">
-                <i class="bi bi-send" @onclick="EnviarMensaje"></i>
             </div>
         </div>
     </div>
-</div>
+
+}
+
+
 
 @code {
 
@@ -86,13 +97,19 @@
     string RespuestaBot { get; set; } = string.Empty;
     string MensajeInicial { get; set; } = string.Empty;
     bool BotPensando{ get; set; }
+    bool MuestraHistorial { get; set; }
 
     protected override async Task OnInitializedAsync()
+    {
+        await InicializarBot();
+        base.OnInitialized();
+    }
+
+    async Task InicializarBot()
     {
         MensajeInicial = await ServicioBot.DefinirRespuestaMenu("0");
         ContadorMensaje++;
         MensajesBot.Add(ContadorMensaje, MensajeInicial);
-        base.OnInitialized();
     }
 
     async Task EnviarMensaje()
@@ -102,10 +119,29 @@
             MensajesUsuario.Add(ContadorMensaje, RespuestaUsuario);
             ContadorMensaje++;
             BotPensando = true;
+
+
+            if (RespuestaUsuario == "2")
+            {
+                BotPensando = false;
+                MuestraHistorial = true;
+            }
+            else
+            {
+                MuestraHistorial = false;
+            }
+
             RespuestaBot = await ServicioBot.DefinirRespuestaMenu(RespuestaUsuario);
             BotPensando = false;
             RespuestaUsuario = string.Empty;
             MensajesBot.Add(ContadorMensaje, RespuestaBot);
         }
+    }
+    async Task OcultarHistorial(bool muestraHistorial)
+    {
+        MensajesBot.Clear();
+        MensajesUsuario.Clear();
+        await InicializarBot();
+        MuestraHistorial = muestraHistorial;
     }
 }

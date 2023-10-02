@@ -11,6 +11,8 @@ public partial class BitacoraHistorial
 
     public string Correo { get; set; } = null!;
 
+    public DateTime Fecha { get; set; }
+
     public virtual Usuario CorreoNavigation { get; set; } = null!;
 
     public virtual Accion IdAccionNavigation { get; set; } = null!;

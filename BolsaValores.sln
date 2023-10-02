@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BolsaValores.Client", "Bols
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BolsaValores.Shared", "BolsaValores.Shared\BolsaValores.Shared.csproj", "{CCEB19CE-72C5-49B1-97D6-2FFAC467B8B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BolsaValores.DataAccess", "BolsaValores.DataAccess\BolsaValores.DataAccess.csproj", "{3FE83617-C68C-4381-9CE5-79E3E8B0D9F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BolsaValores.DataAccess", "BolsaValores.DataAccess\BolsaValores.DataAccess.csproj", "{3FE83617-C68C-4381-9CE5-79E3E8B0D9F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
