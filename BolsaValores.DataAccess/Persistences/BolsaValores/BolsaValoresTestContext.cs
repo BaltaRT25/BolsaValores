@@ -88,6 +88,10 @@ public partial class BolsaValoresTestContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("correo");
+            entity.Property(e => e.Fecha)
+                .HasDefaultValueSql("('10-01-2023 10:00:00')")
+                .HasColumnType("datetime")
+                .HasColumnName("fecha");
             entity.Property(e => e.IdAccion)
                 .HasMaxLength(50)
                 .IsUnicode(false)

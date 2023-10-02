@@ -15,18 +15,24 @@ namespace BolsaValores.Client.Services
 
         public async Task<AccionDTO> Consultar(string idAccion)
         {
-            var accion = await HttpCliente.GetAsync($"https://localhost:7222/Bot/Consultar/{idAccion}");
+            try
+            {
+                var accion = await HttpCliente.GetAsync($"https://localhost:7222/Bot/Consultar/{idAccion}");
 
-            if(accion.IsSuccessStatusCode)
-            {
-                return JsonSerializer.Deserialize<AccionDTO>(await accion.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true });
+                if (accion.IsSuccessStatusCode)
+                {
+                    return JsonSerializer.Deserialize<AccionDTO>(await accion.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true });
+                }
+                else
+                {
+                    return new AccionDTO();
+                }
             }
-            else 
+            catch (Exception ex) 
             {
+                Console.WriteLine(ex.Message);
                 return new AccionDTO();
             }
-
-            //falta indicar que la respuesta es exitosa ensuresuccess
         }
     }
 }
